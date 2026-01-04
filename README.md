@@ -10,33 +10,38 @@ npm install github:fannan/cline#latest
 
 Or pin to a version:
 ```bash
-npm install github:fannan/cline#v1.0.0
+npm install github:fannan/cline#v2.0.0
 ```
 
 ## Usage
 
 ```javascript
-import { createD1Client } from '@cline/core/d1';
-import { createR2Client } from '@cline/core/r2';
-import { createSlackClient, blocks } from '@cline/core/slack';
-import { useLocalStorage } from '@cline/core/storage';
+// Services
+import { createSqlClient } from '@cline/core/services/sql';
+import { createS3Client } from '@cline/core/services/s3';
+import { createSlackClient, blocks } from '@cline/core/services/slack';
+
+// React hooks
+import { useLocalStorage } from '@cline/core/react/storage';
+
+// Job framework
 import { Job, setupJobsTable } from '@cline/core/jobs';
 ```
 
 ## Services
 
-### D1 - Cloudflare D1 Database Client
+### SQL - Cloudflare D1 Database Client
 
 Auto-detecting client that works in Workers (native binding) and Node.js (REST API).
 
 ```javascript
-import { createD1Client } from '@cline/core/d1';
+import { createSqlClient } from '@cline/core/services/sql';
 
 // In Workers
-const db = createD1Client({ binding: env.DB });
+const db = createSqlClient({ binding: env.DB });
 
 // In Node.js
-const db = createD1Client({
+const db = createSqlClient({
   accountId: process.env.CLOUDFLARE_ACCOUNT_ID,
   databaseId: process.env.CLOUDFLARE_D1_DATABASE_ID,
   apiToken: process.env.CLOUDFLARE_API_TOKEN
@@ -45,18 +50,18 @@ const db = createD1Client({
 const users = await db.queryAll('SELECT * FROM users');
 ```
 
-### R2 - Cloudflare R2 Object Storage
+### S3 - Cloudflare R2 Object Storage
 
-Auto-detecting client for R2 bucket operations.
+Auto-detecting client for S3-compatible bucket operations.
 
 ```javascript
-import { createR2Client } from '@cline/core/r2';
+import { createS3Client } from '@cline/core/services/s3';
 
 // In Workers
-const storage = createR2Client({ binding: env.BUCKET, publicUrl: env.R2_PUBLIC_URL });
+const storage = createS3Client({ binding: env.BUCKET, publicUrl: env.R2_PUBLIC_URL });
 
 // In Node.js
-const storage = createR2Client({
+const storage = createS3Client({
   accountId: process.env.CLOUDFLARE_ACCOUNT_ID,
   bucketName: process.env.R2_BUCKET_NAME,
   apiToken: process.env.CLOUDFLARE_API_TOKEN,
@@ -71,7 +76,7 @@ const url = await storage.put('images/photo.jpg', buffer, { contentType: 'image/
 Slack messaging with Block Kit helpers.
 
 ```javascript
-import { createSlackClient, blocks } from '@cline/core/slack';
+import { createSlackClient, blocks } from '@cline/core/services/slack';
 
 const slack = createSlackClient({
   token: process.env.SLACK_BOT_TOKEN,
@@ -79,7 +84,7 @@ const slack = createSlackClient({
 });
 
 await slack.post([
-  blocks.header('🆕 New Order'),
+  blocks.header('New Order'),
   blocks.fields(['Customer', 'John'], ['Total', '$42']),
   blocks.section('Order details...'),
   blocks.button('View', 'https://example.com', 'view_btn'),
@@ -87,18 +92,22 @@ await slack.post([
 ], { text: 'New order' });
 ```
 
-### Storage - React localStorage Hook
+## React Hooks
+
+### Storage - localStorage Hook
 
 Persistent state with cross-tab sync.
 
 ```javascript
-import { useLocalStorage } from '@cline/core/storage';
+import { useLocalStorage } from '@cline/core/react/storage';
 
 function Settings() {
   const [theme, setTheme] = useLocalStorage('app.theme', 'light');
   return <button onClick={() => setTheme('dark')}>Dark Mode</button>;
 }
 ```
+
+## Job Framework
 
 ### Jobs - Instrumented Job Execution
 
@@ -120,8 +129,8 @@ See [jobs/README.md](./jobs/README.md) for full documentation.
 ## Versioning
 
 - `#latest` - Current development (may have breaking changes)
-- `#v1` - Stable v1.x branch (gets patches)
-- `#v1.0.0` - Frozen snapshot
+- `#v2` - Stable v2.x branch (gets patches)
+- `#v2.0.0` - Frozen snapshot
 
 ## Project Template
 
