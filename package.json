@@ -1,20 +1,18 @@
 {
   "name": "@cline/core",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Cline - Shared services for Cloudflare Workers projects",
   "type": "module",
   "exports": {
-    "./d1": "./d1/index.js",
-    "./slack": "./slack/index.js",
-    "./r2": "./r2/index.js",
-    "./storage": "./storage/index.js",
+    "./services/sql": "./services/sql/index.js",
+    "./services/s3": "./services/s3/index.js",
+    "./services/slack": "./services/slack/index.js",
+    "./react/storage": "./react/storage/index.js",
     "./jobs": "./jobs/index.js"
   },
   "files": [
-    "d1",
-    "slack",
-    "r2",
-    "storage",
+    "services",
+    "react",
     "jobs"
   ],
   "repository": {
@@ -24,8 +22,8 @@
   "keywords": [
     "cloudflare",
     "workers",
-    "d1",
-    "r2",
+    "sql",
+    "s3",
     "slack",
     "react",
     "cline"

@@ -1,8 +1,8 @@
 /**
- * Auto-detecting D1 client factory
- * Works in both Node.js (REST API) and Cloudflare Workers (native binding)
+ * Auto-detecting SQL client factory
+ * Works in both Node.js (REST API) and Cloudflare Workers (native D1 binding)
  */
-export function createD1Client(config) {
+export function createSqlClient(config) {
   // Detect environment
   if (isWorkersEnvironment(config)) {
     return createWorkerBinding(config);

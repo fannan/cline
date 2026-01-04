@@ -1,8 +1,8 @@
 /**
- * Auto-detecting R2 client factory
- * Works in both Node.js (REST API) and Cloudflare Workers (native binding)
+ * Auto-detecting S3-compatible storage client factory
+ * Works in both Node.js (REST API) and Cloudflare Workers (native R2 binding)
  */
-export function createR2Client(config) {
+export function createS3Client(config) {
   // Detect environment
   if (isWorkersEnvironment(config)) {
     return createWorkerBinding(config);

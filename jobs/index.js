@@ -72,7 +72,7 @@
  *   sync_state: key, value, updated_at (used for heartbeat state)
  */
 
-import { blocks } from '../slack/index.js';
+import { blocks } from '../services/slack/index.js';
 
 // ============================================================================
 // Schema Setup
