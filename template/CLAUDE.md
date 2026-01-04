@@ -24,16 +24,10 @@ packages/
 ├── api/           # @my-app/api - Hono on Cloudflare Workers
 ├── dashboard/     # @my-app/dashboard - React + Vite + Tailwind
 └── shared/        # Project-specific shared code
+    ├── d1/        # D1 database client (if added)
+    ├── r2/        # R2 storage client (if added)
+    └── ...
 ```
-
-## Framework Packages
-
-This project uses the Marcella Framework packages:
-
-- `@marcellafoundation/d1` - Cloudflare D1 database client
-- `@marcellafoundation/storage` - React localStorage hooks
-- `@marcellafoundation/slack` - Slack notifications (optional)
-- `@marcellafoundation/dates` - Date utilities
 
 ## Key Files
 
@@ -57,8 +51,26 @@ CLOUDFLARE_API_TOKEN=
 # CLOUDFLARE_D1_DATABASE_ID=
 ```
 
+## Adding Services
+
+Copy services from the marcella-framework repo:
+
+```bash
+# D1 database client
+cp -r path/to/marcella-framework/services/d1 packages/shared/d1
+
+# R2 object storage
+cp -r path/to/marcella-framework/services/r2 packages/shared/r2
+
+# Slack notifications
+cp -r path/to/marcella-framework/services/slack packages/shared/slack
+
+# React localStorage hooks
+cp -r path/to/marcella-framework/services/storage packages/shared/storage
+```
+
 ## Development Guidelines
 
 - Keep the API lightweight - use Workers for edge performance
-- Use `@marcellafoundation/storage` for persistent UI state
+- Use shared services for consistent patterns across Node.js and Workers
 - Follow existing patterns in the codebase

@@ -1,147 +1,91 @@
 # Marcella Framework
 
-Reusable infrastructure for Cloudflare Workers + React applications.
-
-## Packages
-
-| Package | Description |
-|---------|-------------|
-| [@marcellafoundation/d1](./packages/d1) | Auto-detecting Cloudflare D1 client (Workers + Node.js) |
-| [@marcellafoundation/storage](./packages/storage) | React localStorage hooks with SSR safety |
-| [@marcellafoundation/slack](./packages/slack) | Slack Block Kit client |
-| [@marcellafoundation/dates](./packages/dates) | Date utilities with timezone support |
+Project template and service libraries for Cloudflare Workers + React applications.
 
 ## Quick Start
 
-### Create a new project
-
 ```bash
-npx degit marcella-foundation/marcella-framework/template my-project
-cd my-project
+# Create a new project
+./create-project.sh my-app
+
+# Or clone manually
+cp -r template my-app
+cd my-app
 npm install
 npm run dev
 ```
 
-### Use packages in existing project
+## Structure
+
+```
+marcella-framework/
+├── template/           # Full starter project
+│   ├── packages/
+│   │   ├── api/        # Hono on Cloudflare Workers
+│   │   ├── dashboard/  # React + Vite + Tailwind
+│   │   └── shared/     # Local shared code
+│   └── ...
+│
+└── services/           # Drop-in service libraries
+    ├── d1/             # Cloudflare D1 database client
+    ├── r2/             # Cloudflare R2 object storage
+    ├── slack/          # Slack Block Kit messaging
+    └── storage/        # React localStorage hooks
+```
+
+## Adding Services
+
+Services are standalone libraries you copy into your project:
 
 ```bash
-npm install @marcellafoundation/d1 @marcellafoundation/storage @marcellafoundation/slack @marcellafoundation/dates
+# Need Slack notifications?
+cp -r services/slack my-app/packages/shared/slack
+
+# Need R2 storage?
+cp -r services/r2 my-app/packages/shared/r2
 ```
 
-## Package Usage
+Each service has its own README with usage examples.
 
-### @marcellafoundation/d1
+## Services
 
-Auto-detecting D1 client that works in both Workers and Node.js:
+| Service | Purpose |
+|---------|---------|
+| [d1](./services/d1/) | Cloudflare D1 database client (Workers + Node.js) |
+| [r2](./services/r2/) | Cloudflare R2 object storage (Workers + Node.js) |
+| [slack](./services/slack/) | Slack Block Kit messaging |
+| [storage](./services/storage/) | React localStorage hooks with cross-tab sync |
 
-```typescript
-import { createD1Client } from '@marcellafoundation/d1';
+## Versioning
 
-// In Cloudflare Workers
-const db = createD1Client({ binding: env.DB });
+Projects track which template version they were created from:
 
-// In Node.js (REST API)
-const db = createD1Client({
-  accountId: process.env.CLOUDFLARE_ACCOUNT_ID,
-  databaseId: process.env.CLOUDFLARE_D1_DATABASE_ID,
-  apiToken: process.env.CLOUDFLARE_API_TOKEN
-});
+```bash
+# Check your project's template version
+cat .template-version
 
-// Same API in both environments
-const users = await db.queryAll<User>('SELECT * FROM users');
-const user = await db.queryOne<User>('SELECT * FROM users WHERE id = ?', [1]);
+# See what's new
+gh release list --repo fannan/marcella-framework
 ```
 
-### @marcellafoundation/storage
+## Updating Services
 
-React hook for persistent localStorage state:
+To update a service in your project:
 
-```tsx
-import { useLocalStorage } from '@marcellafoundation/storage';
+```bash
+# Check what changed
+diff -r my-app/packages/shared/d1 marcella-framework/services/d1
 
-function App() {
-  const [theme, setTheme] = useLocalStorage('app.theme', 'light');
-
-  return (
-    <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
-      Toggle Theme
-    </button>
-  );
-}
-```
-
-### @marcellafoundation/slack
-
-Post Block Kit messages to Slack:
-
-```typescript
-import { createSlackClient, section, divider } from '@marcellafoundation/slack';
-
-const slack = createSlackClient({
-  token: process.env.SLACK_BOT_TOKEN,
-  defaultChannel: process.env.SLACK_CHANNEL
-});
-
-await slack.post([
-  section('*New event!* Something happened'),
-  divider(),
-  section('Details here...')
-], { text: 'New event notification' });
-```
-
-### @marcellafoundation/dates
-
-Date utilities with configurable timezone:
-
-```typescript
-import { createDateUtils, formatDateISO, parseTimeString } from '@marcellafoundation/dates';
-
-// Create timezone-specific utilities
-const pacific = createDateUtils('America/Los_Angeles');
-const eastern = createDateUtils('America/New_York');
-
-// Get offset (handles DST automatically)
-pacific.getOffset(new Date()); // '-08:00' or '-07:00'
-
-// Format for display
-pacific.formatTime(new Date()); // 'Jan 3, 10:30 AM'
-
-// Timezone-agnostic utilities
-formatDateISO(new Date()); // '2024-01-03'
-parseTimeString('8:30 am'); // { hours: 8, minutes: 30 }
+# Copy updated version
+cp -r marcella-framework/services/d1/* my-app/packages/shared/d1/
 ```
 
 ## Development
 
+This template is synced from patterns in the [FeedTahoe](https://github.com/fannan/FoodRescueTracker) project.
+
+To sync updates from FeedTahoe:
 ```bash
-# Install dependencies
-npm install
-
-# Build all packages
-npm run build
-
-# Run tests
-npm test
-
-# Type check
-npm run typecheck
+# In FeedTahoe repo
+./scripts/sync-to-template.sh
 ```
-
-## Publishing
-
-This monorepo uses [Changesets](https://github.com/changesets/changesets) for version management:
-
-```bash
-# Create a changeset
-npx changeset
-
-# Version packages
-npm run version
-
-# Publish (usually handled by CI)
-npm run publish
-```
-
-## License
-
-MIT
