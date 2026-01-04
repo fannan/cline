@@ -422,7 +422,7 @@ export class Job {
         const caption = `${runCount} ${runCount === 1 ? 'run' : 'runs'} since last update${lastSyncText}`;
 
         return [
-            blocks.section(`*✓ ${this.config.name}* • No updates`),
+            blocks.section(`:runner: ${this.config.name}`),
             blocks.section(dots || '•'),
             blocks.context(caption)
         ];
