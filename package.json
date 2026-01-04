@@ -1,7 +1,7 @@
 {
   "name": "@marcella/core",
   "version": "1.0.0",
-  "description": "Shared services for Cloudflare Workers + React applications",
+  "description": "Shared services for marcella-framework core",
   "type": "module",
   "exports": {
     "./d1": "./d1/index.js",
