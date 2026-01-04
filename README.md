@@ -20,6 +20,7 @@ import { createD1Client } from '@cline/core/d1';
 import { createR2Client } from '@cline/core/r2';
 import { createSlackClient, blocks } from '@cline/core/slack';
 import { useLocalStorage } from '@cline/core/storage';
+import { Job, setupJobsTable } from '@cline/core/jobs';
 ```
 
 ## Services
@@ -98,6 +99,75 @@ function Settings() {
   return <button onClick={() => setTheme('dark')}>Dark Mode</button>;
 }
 ```
+
+### Jobs - Instrumented Job Execution
+
+Class-based job framework with automatic D1 logging and Slack notifications.
+
+```javascript
+import { Job, setupJobsTable } from '@cline/core/jobs';
+
+// One-time setup (creates job_runs and sync_state tables)
+await setupJobsTable(db);
+
+// Define a job
+class MySync extends Job {
+  static config = {
+    name: 'my-sync',
+    // Optional: enable Slack notifications
+    slack: {
+      channel: 'C0A5PCREQPP',
+      username: 'My Bot',
+      icon_emoji: ':robot_face:',
+      heartbeat: true  // track quiet runs with visual dots
+    }
+  };
+
+  async run(context) {
+    // context.db - D1 client (if provided)
+    // context.runId - this run's ID (if D1 enabled)
+    // context.log(msg) - structured logging
+
+    const results = await this.doWork();
+
+    // Return output data (stored as JSON in job_runs)
+    return {
+      processed: results.count,
+      // Special field: tells heartbeat whether to reset
+      notable: results.changes > 0
+    };
+  }
+}
+
+// Execute with full instrumentation
+const job = new MySync({ db, slack });
+await job.execute();
+
+// Or with just D1 logging (no Slack)
+const job = new MySync({ db });
+
+// Or with just Slack (no D1 persistence)
+const job = new MySync({ slack });
+
+// Or bare execution (stdout logging only)
+const job = new MySync();
+```
+
+**Lifecycle:**
+1. `execute()` creates `job_runs` record (status: 'running')
+2. Calls your `run()` method
+3. Updates record on success (status: 'completed', output_data: JSON)
+4. Updates record on failure (status: 'failed', error_message)
+5. Handles Slack notifications if configured
+
+**Heartbeat Feature:**
+When `slack.heartbeat: true`, quiet runs (where `notable: false`) show a visual indicator with growing dots:
+```
+✓ my-sync • No updates
+••••••••••
+12 runs since last update (2h 15m)
+```
+When a notable update occurs, the heartbeat resets.
 
 ## Versioning
 
