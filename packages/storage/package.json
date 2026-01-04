@@ -1,5 +1,5 @@
 {
-  "name": "@marcella/storage",
+  "name": "@marcellafoundation/storage",
   "version": "1.0.0",
   "description": "React hooks for persistent state using localStorage with SSR safety and cross-tab sync",
   "type": "module",

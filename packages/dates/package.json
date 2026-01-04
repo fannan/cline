@@ -1,5 +1,5 @@
 {
-  "name": "@marcella/dates",
+  "name": "@marcellafoundation/dates",
   "version": "1.0.0",
   "description": "Date utilities with configurable timezone support and DST handling",
   "type": "module",

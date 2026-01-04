@@ -1,5 +1,5 @@
 {
-  "name": "@marcella/d1",
+  "name": "@marcellafoundation/d1",
   "version": "1.0.0",
   "description": "Auto-detecting Cloudflare D1 client that works in both Node.js (REST API) and Workers (native binding)",
   "type": "module",

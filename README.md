@@ -6,10 +6,10 @@ Reusable infrastructure for Cloudflare Workers + React applications.
 
 | Package | Description |
 |---------|-------------|
-| [@marcella/d1](./packages/d1) | Auto-detecting Cloudflare D1 client (Workers + Node.js) |
-| [@marcella/storage](./packages/storage) | React localStorage hooks with SSR safety |
-| [@marcella/slack](./packages/slack) | Slack Block Kit client |
-| [@marcella/dates](./packages/dates) | Date utilities with timezone support |
+| [@marcellafoundation/d1](./packages/d1) | Auto-detecting Cloudflare D1 client (Workers + Node.js) |
+| [@marcellafoundation/storage](./packages/storage) | React localStorage hooks with SSR safety |
+| [@marcellafoundation/slack](./packages/slack) | Slack Block Kit client |
+| [@marcellafoundation/dates](./packages/dates) | Date utilities with timezone support |
 
 ## Quick Start
 
@@ -25,17 +25,17 @@ npm run dev
 ### Use packages in existing project
 
 ```bash
-npm install @marcella/d1 @marcella/storage @marcella/slack @marcella/dates
+npm install @marcellafoundation/d1 @marcellafoundation/storage @marcellafoundation/slack @marcellafoundation/dates
 ```
 
 ## Package Usage
 
-### @marcella/d1
+### @marcellafoundation/d1
 
 Auto-detecting D1 client that works in both Workers and Node.js:
 
 ```typescript
-import { createD1Client } from '@marcella/d1';
+import { createD1Client } from '@marcellafoundation/d1';
 
 // In Cloudflare Workers
 const db = createD1Client({ binding: env.DB });
@@ -52,12 +52,12 @@ const users = await db.queryAll<User>('SELECT * FROM users');
 const user = await db.queryOne<User>('SELECT * FROM users WHERE id = ?', [1]);
 ```
 
-### @marcella/storage
+### @marcellafoundation/storage
 
 React hook for persistent localStorage state:
 
 ```tsx
-import { useLocalStorage } from '@marcella/storage';
+import { useLocalStorage } from '@marcellafoundation/storage';
 
 function App() {
   const [theme, setTheme] = useLocalStorage('app.theme', 'light');
@@ -70,12 +70,12 @@ function App() {
 }
 ```
 
-### @marcella/slack
+### @marcellafoundation/slack
 
 Post Block Kit messages to Slack:
 
 ```typescript
-import { createSlackClient, section, divider } from '@marcella/slack';
+import { createSlackClient, section, divider } from '@marcellafoundation/slack';
 
 const slack = createSlackClient({
   token: process.env.SLACK_BOT_TOKEN,
@@ -89,12 +89,12 @@ await slack.post([
 ], { text: 'New event notification' });
 ```
 
-### @marcella/dates
+### @marcellafoundation/dates
 
 Date utilities with configurable timezone:
 
 ```typescript
-import { createDateUtils, formatDateISO, parseTimeString } from '@marcella/dates';
+import { createDateUtils, formatDateISO, parseTimeString } from '@marcellafoundation/dates';
 
 // Create timezone-specific utilities
 const pacific = createDateUtils('America/Los_Angeles');

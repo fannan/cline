@@ -1,5 +1,5 @@
 {
-  "name": "@marcella/slack",
+  "name": "@marcellafoundation/slack",
   "version": "1.0.0",
   "description": "Slack Block Kit client for posting messages with graceful degradation",
   "type": "module",

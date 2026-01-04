@@ -30,10 +30,10 @@ packages/
 
 This project uses the Marcella Framework packages:
 
-- `@marcella/d1` - Cloudflare D1 database client
-- `@marcella/storage` - React localStorage hooks
-- `@marcella/slack` - Slack notifications (optional)
-- `@marcella/dates` - Date utilities
+- `@marcellafoundation/d1` - Cloudflare D1 database client
+- `@marcellafoundation/storage` - React localStorage hooks
+- `@marcellafoundation/slack` - Slack notifications (optional)
+- `@marcellafoundation/dates` - Date utilities
 
 ## Key Files
 
@@ -60,5 +60,5 @@ CLOUDFLARE_API_TOKEN=
 ## Development Guidelines
 
 - Keep the API lightweight - use Workers for edge performance
-- Use `@marcella/storage` for persistent UI state
+- Use `@marcellafoundation/storage` for persistent UI state
 - Follow existing patterns in the codebase
