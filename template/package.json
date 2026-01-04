@@ -5,7 +5,8 @@
   "type": "module",
   "workspaces": [
     "packages/*",
-    "packages/shared/*"
+    "packages/shared/*",
+    "jobs/*/*"
   ],
   "scripts": {
     "dev": "run-p dev:api dev:dashboard",
