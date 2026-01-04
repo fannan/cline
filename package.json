@@ -7,13 +7,15 @@
     "./d1": "./d1/index.js",
     "./slack": "./slack/index.js",
     "./r2": "./r2/index.js",
-    "./storage": "./storage/index.js"
+    "./storage": "./storage/index.js",
+    "./jobs": "./jobs/index.js"
   },
   "files": [
     "d1",
     "slack",
     "r2",
-    "storage"
+    "storage",
+    "jobs"
   ],
   "repository": {
     "type": "git",
