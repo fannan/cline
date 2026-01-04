@@ -149,6 +149,47 @@ export function createSlackClient({ token, defaultChannel }) {
         },
 
         /**
+         * Update an existing message
+         * @param {string} ts - Message timestamp to update
+         * @param {Array} blocks - New Block Kit blocks
+         * @param {Object} options - Message options
+         * @param {string} options.text - Fallback text for notifications
+         * @param {string} options.channel - Override default channel
+         * @returns {Promise<Object>} Slack API response
+         */
+        async update(ts, blocks, options = {}) {
+            const {
+                text = 'Update',
+                channel = defaultChannel
+            } = options;
+
+            if (!token || !channel || !ts) {
+                console.log('Slack update: missing token, channel, or ts');
+                return null;
+            }
+
+            const response = await fetch('https://slack.com/api/chat.update', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    channel,
+                    ts,
+                    text,
+                    blocks
+                })
+            });
+
+            const result = await response.json();
+            if (!result.ok) {
+                console.error('Slack update error:', result.error);
+            }
+            return result;
+        },
+
+        /**
          * Delete messages from a channel (bot's own messages only)
          * @param {string} channelId - Channel ID
          * @param {number} limit - Max messages to fetch per batch
