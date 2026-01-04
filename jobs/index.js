@@ -397,35 +397,29 @@ export class Job {
         return row?.completed_at || null;
     }
 
-    _formatElapsedTime(ms) {
-        const minutes = Math.floor(ms / 60000);
-        if (minutes < 60) {
-            return `${minutes} min`;
-        }
-        const hours = Math.floor(minutes / 60);
-        const mins = minutes % 60;
-        return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
+    _formatTime(date) {
+        // Format as "12:41pm"
+        let hours = date.getHours();
+        const mins = date.getMinutes();
+        const ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12 || 12;
+        const minsStr = mins < 10 ? `0${mins}` : mins;
+        return `${hours}:${minsStr}${ampm}`;
     }
 
     async _buildHeartbeatBlocks(runCount, startedAt) {
         const dotCount = Math.min(runCount, MAX_HEARTBEAT_DOTS);
         const dots = '•'.repeat(dotCount);
 
-        // Calculate time since heartbeat tracking started
-        const started = new Date(startedAt);
-        const elapsedMs = Date.now() - started;
-        const elapsedText = this._formatElapsedTime(elapsedMs);
-
         // Get last sync time
         const lastSyncTime = await this._getLastSyncTime();
         let lastSyncText = '';
         if (lastSyncTime) {
             const lastSync = new Date(lastSyncTime + 'Z'); // D1 stores without timezone
-            const sinceSyncMs = Date.now() - lastSync;
-            lastSyncText = ` • Last sync: ${this._formatElapsedTime(sinceSyncMs)} ago`;
+            lastSyncText = ` • Last Sync: ${this._formatTime(lastSync)}`;
         }
 
-        const caption = `${runCount} ${runCount === 1 ? 'run' : 'runs'} since last update (${elapsedText})${lastSyncText}`;
+        const caption = `${runCount} ${runCount === 1 ? 'run' : 'runs'} since last update${lastSyncText}`;
 
         return [
             blocks.section(`*✓ ${this.config.name}* • No updates`),
