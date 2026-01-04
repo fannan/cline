@@ -1,0 +1,40 @@
+{
+  "name": "@marcella/core",
+  "version": "1.0.0",
+  "description": "Shared services for Cloudflare Workers + React applications",
+  "type": "module",
+  "exports": {
+    "./d1": "./d1/index.js",
+    "./slack": "./slack/index.js",
+    "./r2": "./r2/index.js",
+    "./storage": "./storage/index.js"
+  },
+  "files": [
+    "d1",
+    "slack",
+    "r2",
+    "storage"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fannan/marcella-framework.git"
+  },
+  "keywords": [
+    "cloudflare",
+    "workers",
+    "d1",
+    "r2",
+    "slack",
+    "react"
+  ],
+  "author": "Marcella Foundation",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=17.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  }
+}

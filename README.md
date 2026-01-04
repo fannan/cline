@@ -1,91 +1,114 @@
-# Marcella Framework
+# @marcella/core
 
-Project template and service libraries for Cloudflare Workers + React applications.
+Shared services for Cloudflare Workers + React applications.
 
-## Quick Start
-
-```bash
-# Create a new project
-./create-project.sh my-app
-
-# Or clone manually
-cp -r template my-app
-cd my-app
-npm install
-npm run dev
-```
-
-## Structure
-
-```
-marcella-framework/
-├── template/           # Full starter project
-│   ├── packages/
-│   │   ├── api/        # Hono on Cloudflare Workers
-│   │   ├── dashboard/  # React + Vite + Tailwind
-│   │   └── shared/     # Local shared code
-│   └── ...
-│
-└── services/           # Drop-in service libraries
-    ├── d1/             # Cloudflare D1 database client
-    ├── r2/             # Cloudflare R2 object storage
-    ├── slack/          # Slack Block Kit messaging
-    └── storage/        # React localStorage hooks
-```
-
-## Adding Services
-
-Services are standalone libraries you copy into your project:
+## Installation
 
 ```bash
-# Need Slack notifications?
-cp -r services/slack my-app/packages/shared/slack
-
-# Need R2 storage?
-cp -r services/r2 my-app/packages/shared/r2
+npm install github:fannan/marcella-framework#latest
 ```
 
-Each service has its own README with usage examples.
+Or pin to a version:
+```bash
+npm install github:fannan/marcella-framework#v1.0.0
+```
+
+## Usage
+
+```javascript
+import { createD1Client } from '@marcella/core/d1';
+import { createR2Client } from '@marcella/core/r2';
+import { createSlackClient, blocks } from '@marcella/core/slack';
+import { useLocalStorage } from '@marcella/core/storage';
+```
 
 ## Services
 
-| Service | Purpose |
-|---------|---------|
-| [d1](./services/d1/) | Cloudflare D1 database client (Workers + Node.js) |
-| [r2](./services/r2/) | Cloudflare R2 object storage (Workers + Node.js) |
-| [slack](./services/slack/) | Slack Block Kit messaging |
-| [storage](./services/storage/) | React localStorage hooks with cross-tab sync |
+### D1 - Cloudflare D1 Database Client
+
+Auto-detecting client that works in Workers (native binding) and Node.js (REST API).
+
+```javascript
+import { createD1Client } from '@marcella/core/d1';
+
+// In Workers
+const db = createD1Client({ binding: env.DB });
+
+// In Node.js
+const db = createD1Client({
+  accountId: process.env.CLOUDFLARE_ACCOUNT_ID,
+  databaseId: process.env.CLOUDFLARE_D1_DATABASE_ID,
+  apiToken: process.env.CLOUDFLARE_API_TOKEN
+});
+
+const users = await db.queryAll('SELECT * FROM users');
+```
+
+### R2 - Cloudflare R2 Object Storage
+
+Auto-detecting client for R2 bucket operations.
+
+```javascript
+import { createR2Client } from '@marcella/core/r2';
+
+// In Workers
+const storage = createR2Client({ binding: env.BUCKET, publicUrl: env.R2_PUBLIC_URL });
+
+// In Node.js
+const storage = createR2Client({
+  accountId: process.env.CLOUDFLARE_ACCOUNT_ID,
+  bucketName: process.env.R2_BUCKET_NAME,
+  apiToken: process.env.CLOUDFLARE_API_TOKEN,
+  publicUrl: process.env.R2_PUBLIC_URL
+});
+
+const url = await storage.put('images/photo.jpg', buffer, { contentType: 'image/jpeg' });
+```
+
+### Slack - Block Kit Client
+
+Slack messaging with Block Kit helpers.
+
+```javascript
+import { createSlackClient, blocks } from '@marcella/core/slack';
+
+const slack = createSlackClient({
+  token: process.env.SLACK_BOT_TOKEN,
+  defaultChannel: process.env.SLACK_CHANNEL
+});
+
+await slack.post([
+  blocks.header('🆕 New Order'),
+  blocks.fields(['Customer', 'John'], ['Total', '$42']),
+  blocks.section('Order details...'),
+  blocks.button('View', 'https://example.com', 'view_btn'),
+  blocks.divider()
+], { text: 'New order' });
+```
+
+### Storage - React localStorage Hook
+
+Persistent state with cross-tab sync.
+
+```javascript
+import { useLocalStorage } from '@marcella/core/storage';
+
+function Settings() {
+  const [theme, setTheme] = useLocalStorage('app.theme', 'light');
+  return <button onClick={() => setTheme('dark')}>Dark Mode</button>;
+}
+```
 
 ## Versioning
 
-Projects track which template version they were created from:
+- `#latest` - Current development (may have breaking changes)
+- `#v1` - Stable v1.x branch (gets patches)
+- `#v1.0.0` - Frozen snapshot
+
+## Project Template
+
+To scaffold a new project using these services:
 
 ```bash
-# Check your project's template version
-cat .template-version
-
-# See what's new
-gh release list --repo fannan/marcella-framework
-```
-
-## Updating Services
-
-To update a service in your project:
-
-```bash
-# Check what changed
-diff -r my-app/packages/shared/d1 marcella-framework/services/d1
-
-# Copy updated version
-cp -r marcella-framework/services/d1/* my-app/packages/shared/d1/
-```
-
-## Development
-
-This template is synced from patterns in the [FeedTahoe](https://github.com/fannan/FoodRescueTracker) project.
-
-To sync updates from FeedTahoe:
-```bash
-# In FeedTahoe repo
-./scripts/sync-to-template.sh
+./create-project.sh my-app
 ```
