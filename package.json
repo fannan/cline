@@ -1,0 +1,33 @@
+{
+  "name": "marcella-framework",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Reusable infrastructure for Cloudflare Workers + React applications",
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "clean": "rm -rf packages/*/dist",
+    "typecheck": "tsc --build",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "publish": "npm run build && changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.3.0",
+    "vitest": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marcella-foundation/marcella-framework.git"
+  },
+  "license": "MIT"
+}

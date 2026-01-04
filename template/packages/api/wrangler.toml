@@ -1,0 +1,17 @@
+name = "my-app-api"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# Uncomment and configure your D1 database
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "my-database"
+# database_id = "YOUR_DATABASE_ID"
+
+# Uncomment and configure your R2 bucket
+# [[r2_buckets]]
+# binding = "R2"
+# bucket_name = "my-bucket"
+
+[vars]
+ENVIRONMENT = "development"

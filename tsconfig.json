@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.base.json",
+  "references": [
+    { "path": "./packages/d1" },
+    { "path": "./packages/storage" },
+    { "path": "./packages/slack" },
+    { "path": "./packages/dates" }
+  ],
+  "files": []
+}
