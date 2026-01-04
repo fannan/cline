@@ -1,21 +1,26 @@
 /**
  * Job Framework - Instrumented job execution with optional D1 logging and Slack notifications
  *
- * Usage:
+ * @module @cline/core/jobs
+ * @exports Job - Base class to extend for your jobs
+ * @exports setupJobsTable - One-time schema setup function
+ *
+ * ## Quick Start
+ *
  *   import { Job, setupJobsTable } from '@cline/core/jobs';
  *
- *   // One-time setup (creates tables if needed)
+ *   // One-time setup (creates job_runs and sync_state tables)
  *   await setupJobsTable(db);
  *
  *   // Define a job
  *   class MySync extends Job {
  *     static config = {
  *       name: 'my-sync',
- *       slack: {
+ *       slack: {                          // Optional - enables Slack notifications
  *         channel: 'C0A5PCREQPP',
  *         username: 'My Bot',
  *         icon_emoji: ':robot_face:',
- *         heartbeat: true
+ *         heartbeat: true                 // Track quiet runs with visual dots
  *       }
  *     };
  *
@@ -27,14 +32,44 @@
  *       const results = await this.doWork();
  *       return {
  *         ...results,
- *         notable: results.changes > 0  // tells heartbeat when to reset
+ *         notable: results.changes > 0   // Tells heartbeat when to reset
  *       };
  *     }
  *   }
  *
- *   // Execute
+ *   // Execute with full instrumentation
  *   const job = new MySync({ db, slack });
  *   await job.execute();
+ *
+ * ## Flexibility - Pass What You Need
+ *
+ *   new MySync({ db, slack })  // Full: D1 logging + Slack notifications
+ *   new MySync({ db })         // D1 logging only, no Slack
+ *   new MySync({ slack })      // Slack only, no D1 persistence
+ *   new MySync()               // Bare execution, stdout logging only
+ *
+ * ## Lifecycle
+ *
+ *   1. execute() creates job_runs record (status: 'running')
+ *   2. Calls your run() method
+ *   3. On success: updates record (status: 'completed', output_data: JSON)
+ *   4. On error: updates record (status: 'failed', error_message)
+ *   5. Handles Slack notifications based on config
+ *
+ * ## Heartbeat Feature
+ *
+ *   When slack.heartbeat: true, quiet runs (notable: false) show a visual indicator:
+ *
+ *     ✓ my-sync • No updates
+ *     ••••••••••
+ *     12 runs since last update (2h 15m)
+ *
+ *   When a notable update occurs (notable: true), the heartbeat resets.
+ *
+ * ## Tables Created by setupJobsTable()
+ *
+ *   job_runs: id, job_name, started_at, completed_at, status, output_data, error_message
+ *   sync_state: key, value, updated_at (used for heartbeat state)
  */
 
 import { blocks } from '../slack/index.js';
