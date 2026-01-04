@@ -398,13 +398,13 @@ export class Job {
     }
 
     _formatTime(date) {
-        // Format as "12:41pm"
-        let hours = date.getHours();
-        const mins = date.getMinutes();
-        const ampm = hours >= 12 ? 'pm' : 'am';
-        hours = hours % 12 || 12;
-        const minsStr = mins < 10 ? `0${mins}` : mins;
-        return `${hours}:${minsStr}${ampm}`;
+        // Format as "12:41pm" in PST
+        return date.toLocaleString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true,
+            timeZone: 'America/Los_Angeles'
+        }).toLowerCase();
     }
 
     async _buildHeartbeatBlocks(runCount, startedAt) {
