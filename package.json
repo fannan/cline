@@ -1,7 +1,7 @@
 {
-  "name": "@marcella/core",
+  "name": "@cline/core",
   "version": "1.0.0",
-  "description": "Shared services for Cloudflare Workers + React applications",
+  "description": "Cline - Shared services for Cloudflare Workers projects",
   "type": "module",
   "exports": {
     "./d1": "./d1/index.js",
@@ -17,7 +17,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fannan/marcella-framework.git"
+    "url": "git+https://github.com/fannan/cline.git"
   },
   "keywords": [
     "cloudflare",
@@ -25,9 +25,10 @@
     "d1",
     "r2",
     "slack",
-    "react"
+    "react",
+    "cline"
   ],
-  "author": "Marcella Foundation",
+  "author": "",
   "license": "MIT",
   "peerDependencies": {
     "react": ">=17.0.0"

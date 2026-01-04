@@ -24,9 +24,10 @@ packages/
 ├── api/           # @my-app/api - Hono on Cloudflare Workers
 ├── dashboard/     # @my-app/dashboard - React + Vite + Tailwind
 └── shared/        # Project-specific shared code
-    ├── d1/        # D1 database client (if added)
-    ├── r2/        # R2 storage client (if added)
-    └── ...
+
+jobs/
+└── <category>/    # Organized by domain (e.g., feed, sync, notifications)
+    └── <job>/     # Individual scheduled job
 ```
 
 ## Key Files
@@ -51,23 +52,45 @@ CLOUDFLARE_API_TOKEN=
 # CLOUDFLARE_D1_DATABASE_ID=
 ```
 
-## Adding Services
+## Using Framework Services
 
-Copy services from the marcella-framework repo:
+Services are available via the `@cline/core` git dependency:
+
+```javascript
+// D1 database client
+import { createD1Client } from '@cline/core/d1';
+
+// Slack notifications
+import { createSlackClient, blocks } from '@cline/core/slack';
+
+// React localStorage hooks
+import { useLocalStorage } from '@cline/core/storage';
+
+// R2 object storage
+import { createR2Client } from '@cline/core/r2';
+```
+
+## Adding Jobs
+
+Create scheduled jobs in `jobs/<category>/<job-name>/`:
 
 ```bash
-# D1 database client
-cp -r path/to/marcella-framework/services/d1 packages/shared/d1
-
-# R2 object storage
-cp -r path/to/marcella-framework/services/r2 packages/shared/r2
-
-# Slack notifications
-cp -r path/to/marcella-framework/services/slack packages/shared/slack
-
-# React localStorage hooks
-cp -r path/to/marcella-framework/services/storage packages/shared/storage
+mkdir -p jobs/sync/my-scraper
 ```
+
+Create `package.json`:
+```json
+{
+  "name": "@my-app/my-scraper",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "sync": "node index.js"
+  }
+}
+```
+
+Run with: `npm run sync -w @my-app/my-scraper`
 
 ## Development Guidelines
 

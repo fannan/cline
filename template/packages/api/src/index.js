@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { createD1Client } from '@marcella/d1';
+import { createD1Client } from '@cline/d1';
 
 const app = new Hono();
 

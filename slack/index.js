@@ -2,7 +2,7 @@
  * Generic Slack client with Block Kit helpers
  *
  * Usage:
- *   import { createSlackClient, blocks } from '@marcella/slack';
+ *   import { createSlackClient, blocks } from '@cline/slack';
  *
  *   const slack = createSlackClient({
  *       token: process.env.SLACK_BOT_TOKEN,

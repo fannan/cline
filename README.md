@@ -1,25 +1,25 @@
-# @marcella/core
+# @cline/core
 
 Shared services for Cloudflare Workers + React applications.
 
 ## Installation
 
 ```bash
-npm install github:fannan/marcella-framework#latest
+npm install github:fannan/cline#latest
 ```
 
 Or pin to a version:
 ```bash
-npm install github:fannan/marcella-framework#v1.0.0
+npm install github:fannan/cline#v1.0.0
 ```
 
 ## Usage
 
 ```javascript
-import { createD1Client } from '@marcella/core/d1';
-import { createR2Client } from '@marcella/core/r2';
-import { createSlackClient, blocks } from '@marcella/core/slack';
-import { useLocalStorage } from '@marcella/core/storage';
+import { createD1Client } from '@cline/core/d1';
+import { createR2Client } from '@cline/core/r2';
+import { createSlackClient, blocks } from '@cline/core/slack';
+import { useLocalStorage } from '@cline/core/storage';
 ```
 
 ## Services
@@ -29,7 +29,7 @@ import { useLocalStorage } from '@marcella/core/storage';
 Auto-detecting client that works in Workers (native binding) and Node.js (REST API).
 
 ```javascript
-import { createD1Client } from '@marcella/core/d1';
+import { createD1Client } from '@cline/core/d1';
 
 // In Workers
 const db = createD1Client({ binding: env.DB });
@@ -49,7 +49,7 @@ const users = await db.queryAll('SELECT * FROM users');
 Auto-detecting client for R2 bucket operations.
 
 ```javascript
-import { createR2Client } from '@marcella/core/r2';
+import { createR2Client } from '@cline/core/r2';
 
 // In Workers
 const storage = createR2Client({ binding: env.BUCKET, publicUrl: env.R2_PUBLIC_URL });
@@ -70,7 +70,7 @@ const url = await storage.put('images/photo.jpg', buffer, { contentType: 'image/
 Slack messaging with Block Kit helpers.
 
 ```javascript
-import { createSlackClient, blocks } from '@marcella/core/slack';
+import { createSlackClient, blocks } from '@cline/core/slack';
 
 const slack = createSlackClient({
   token: process.env.SLACK_BOT_TOKEN,
@@ -91,7 +91,7 @@ await slack.post([
 Persistent state with cross-tab sync.
 
 ```javascript
-import { useLocalStorage } from '@marcella/core/storage';
+import { useLocalStorage } from '@cline/core/storage';
 
 function Settings() {
   const [theme, setTheme] = useLocalStorage('app.theme', 'light');
