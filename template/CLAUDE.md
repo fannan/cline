@@ -54,20 +54,20 @@ CLOUDFLARE_API_TOKEN=
 
 ## Using Framework Services
 
-Services are available via the `@marcella/core` git dependency:
+Services are available via the `@cline/core` git dependency:
 
 ```javascript
 // D1 database client
-import { createD1Client } from '@marcella/core/d1';
+import { createD1Client } from '@cline/core/d1';
 
 // Slack notifications
-import { createSlackClient, blocks } from '@marcella/core/slack';
+import { createSlackClient, blocks } from '@cline/core/slack';
 
 // React localStorage hooks
-import { useLocalStorage } from '@marcella/core/storage';
+import { useLocalStorage } from '@cline/core/storage';
 
 // R2 object storage
-import { createR2Client } from '@marcella/core/r2';
+import { createR2Client } from '@cline/core/r2';
 ```
 
 ## Adding Jobs
