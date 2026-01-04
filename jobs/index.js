@@ -336,7 +336,7 @@ export class Job {
         if (state) {
             // Update existing heartbeat
             const newCount = state.run_count + 1;
-            const messageBlocks = this._buildHeartbeatBlocks(newCount, state.started_at);
+            const messageBlocks = await this._buildHeartbeatBlocks(newCount, state.started_at);
 
             const result = await this.slack.update(
                 state.message_ts,
@@ -367,7 +367,7 @@ export class Job {
     async _createHeartbeat() {
         const slackConfig = this.config.slack;
         const now = new Date().toISOString();
-        const messageBlocks = this._buildHeartbeatBlocks(1, now);
+        const messageBlocks = await this._buildHeartbeatBlocks(1, now);
 
         const result = await this.slack.post(messageBlocks, {
             text: `${this.config.name} • 1 quiet run`,
@@ -386,25 +386,46 @@ export class Job {
         }
     }
 
-    _buildHeartbeatBlocks(runCount, startedAt) {
+    async _getLastSyncTime() {
+        if (!this.db) return null;
+        const row = await this.db.queryOne(
+            `SELECT completed_at FROM job_runs
+             WHERE job_name = ? AND status = 'completed'
+             ORDER BY completed_at DESC LIMIT 1`,
+            [this.config.name]
+        );
+        return row?.completed_at || null;
+    }
+
+    _formatElapsedTime(ms) {
+        const minutes = Math.floor(ms / 60000);
+        if (minutes < 60) {
+            return `${minutes} min`;
+        }
+        const hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
+    }
+
+    async _buildHeartbeatBlocks(runCount, startedAt) {
         const dotCount = Math.min(runCount, MAX_HEARTBEAT_DOTS);
         const dots = '•'.repeat(dotCount);
 
-        // Calculate elapsed time
+        // Calculate time since heartbeat tracking started
         const started = new Date(startedAt);
         const elapsedMs = Date.now() - started;
-        const elapsedMinutes = Math.floor(elapsedMs / 60000);
+        const elapsedText = this._formatElapsedTime(elapsedMs);
 
-        let elapsedText;
-        if (elapsedMinutes < 60) {
-            elapsedText = `${elapsedMinutes} min`;
-        } else {
-            const hours = Math.floor(elapsedMinutes / 60);
-            const mins = elapsedMinutes % 60;
-            elapsedText = mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
+        // Get last sync time
+        const lastSyncTime = await this._getLastSyncTime();
+        let lastSyncText = '';
+        if (lastSyncTime) {
+            const lastSync = new Date(lastSyncTime + 'Z'); // D1 stores without timezone
+            const sinceSyncMs = Date.now() - lastSync;
+            lastSyncText = ` • Last sync: ${this._formatElapsedTime(sinceSyncMs)} ago`;
         }
 
-        const caption = `${runCount} ${runCount === 1 ? 'run' : 'runs'} since last update (${elapsedText})`;
+        const caption = `${runCount} ${runCount === 1 ? 'run' : 'runs'} since last update (${elapsedText})${lastSyncText}`;
 
         return [
             blocks.section(`*✓ ${this.config.name}* • No updates`),
