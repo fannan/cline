@@ -8,12 +8,16 @@
     "./services/s3": "./services/s3/index.js",
     "./services/slack": "./services/slack/index.js",
     "./react/storage": "./react/storage/index.js",
-    "./jobs": "./jobs/index.js"
+    "./jobs": "./jobs/index.js",
+    "./utils": "./utils/index.js",
+    "./utils/format": "./utils/format.js",
+    "./utils/date": "./utils/date.js"
   },
   "files": [
     "services",
     "react",
-    "jobs"
+    "jobs",
+    "utils"
   ],
   "repository": {
     "type": "git",
